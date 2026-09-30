@@ -1,0 +1,38 @@
+# dependencies
+node_modules/
+
+# Next.js / build output
+.next/
+out/
+dist/
+build/
+next-env.d.ts
+*.tsbuildinfo
+
+# environment files (keep the *.example templates)
+.env
+.env.local
+.env.test
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# prisma generated client cache
+.prisma/
+
+# uploaded listing images (keep the folder itself)
+storage/uploads/*
+!storage/uploads/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# test coverage
+coverage/

@@ -1,0 +1,178 @@
+// Community Store Platform - database schema
+// MySQL 8 + Prisma ORM. Database name: community_store
+//
+// Design notes
+// - Users and listings are never hard-deleted. Deleting an account anonymises
+//   the user; deleting a listing sets `deletedAt`. This keeps the moderation
+//   history (reports, removal records) intact, as required.
+// - Categories are an enum: the list is fixed by the requirements, so a lookup
+//   table would add a join without adding flexibility.
+// - Money is DECIMAL(10,2), never FLOAT.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Category {
+  TEXTBOOKS
+  ELECTRONICS
+  SERVICES
+  CLOTHING
+  FURNITURE
+  OTHER
+}
+
+enum ListingStatus {
+  ACTIVE
+  SOLD
+  REMOVED
+}
+
+enum ReportReason {
+  FRAUD
+  INAPPROPRIATE
+  INCORRECT_INFO
+  SPAM
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  REVIEWED
+  DISMISSED
+  ACTION_TAKEN
+}
+
+model User {
+  id                 String    @id @default(cuid())
+  name               String    @db.VarChar(100)
+  email              String    @unique @db.VarChar(255)
+  studentId          String?   @unique @db.VarChar(20)
+  phone              String?   @db.VarChar(20)
+  passwordHash       String    @db.VarChar(255)
+  role               Role      @default(USER)
+  isActive           Boolean   @default(true)
+  deactivatedAt      DateTime?
+  deactivatedById    String?
+  deactivationReason String?   @db.VarChar(500)
+  deletedAt          DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+
+  deactivatedBy    User?          @relation("UserDeactivations", fields: [deactivatedById], references: [id], onDelete: SetNull)
+  deactivatedUsers User[]         @relation("UserDeactivations")
+  listings         Listing[]      @relation("SellerListings")
+  removedListings  Listing[]      @relation("ListingRemovals")
+  wishlistItems    WishlistItem[]
+  reports          Report[]       @relation("ReportReporter")
+  resolvedReports  Report[]       @relation("ReportResolver")
+  sessions         Session[]
+
+  @@index([role])
+  @@index([isActive])
+  @@index([deactivatedById])
+  @@map("users")
+}
+
+model Listing {
+  id            String        @id @default(cuid())
+  title         String        @db.VarChar(120)
+  description   String        @db.Text
+  price         Decimal       @db.Decimal(10, 2)
+  category      Category
+  imageUrl      String?       @db.VarChar(2048)
+  status        ListingStatus @default(ACTIVE)
+  sellerId      String
+  soldAt        DateTime?
+  removedAt     DateTime?
+  removedById   String?
+  removalReason String?       @db.VarChar(500)
+  deletedAt     DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  seller        User           @relation("SellerListings", fields: [sellerId], references: [id], onDelete: Restrict)
+  removedBy     User?          @relation("ListingRemovals", fields: [removedById], references: [id], onDelete: SetNull)
+  wishlistItems WishlistItem[]
+  reports       Report[]
+
+  // Browse page: public listings, newest first
+  @@index([status, deletedAt, createdAt])
+  // Category filter
+  @@index([category, status, createdAt])
+  // Seller profile / My Listings
+  @@index([sellerId, status])
+  // Title prefix searches and admin sorting
+  @@index([title])
+  @@index([removedById])
+  @@map("listings")
+}
+
+model WishlistItem {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  // One entry per user per listing - blocks duplicates at the database level
+  @@unique([userId, listingId])
+  @@index([listingId])
+  @@map("wishlist_items")
+}
+
+model Report {
+  id             String       @id @default(cuid())
+  listingId      String
+  reporterId     String
+  reason         ReportReason
+  details        String?      @db.VarChar(1000)
+  status         ReportStatus @default(PENDING)
+  resolutionNote String?      @db.VarChar(1000)
+  resolvedAt     DateTime?
+  resolvedById   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  listing    Listing @relation(fields: [listingId], references: [id], onDelete: Restrict)
+  reporter   User    @relation("ReportReporter", fields: [reporterId], references: [id], onDelete: Restrict)
+  resolvedBy User?   @relation("ReportResolver", fields: [resolvedById], references: [id], onDelete: SetNull)
+
+  // Admin queue: pending reports, oldest/newest first
+  @@index([status, createdAt])
+  // Duplicate-report check (same user, same listing, still open)
+  @@index([listingId, reporterId, status])
+  @@index([reporterId])
+  @@index([resolvedById])
+  @@map("reports")
+}
+
+model Session {
+  id             String   @id @default(cuid())
+  // HMAC-SHA256 of the random cookie token. The raw token is never stored.
+  tokenHash      String   @unique @db.Char(64)
+  userId         String
+  createdAt      DateTime @default(now())
+  lastActivityAt DateTime @default(now())
+  expiresAt      DateTime
+  userAgent      String?  @db.VarChar(255)
+  ipAddress      String?  @db.VarChar(45)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}

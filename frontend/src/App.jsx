@@ -11,6 +11,7 @@ import Seller from "./pages/Seller.jsx";
 import MyReports from "./pages/MyReports.jsx";
 import Admin from "./pages/Admin.jsx";
 import Auth from "./pages/Auth.jsx";
+import About from "./pages/About.jsx";
 
 // Hash routing: "#/listing/abc" gives ["listing", "abc"]
 function useRoute() {
@@ -66,6 +67,7 @@ export default function App() {
     case "admin": page = <NeedLogin><NeedAdmin><Admin /></NeedAdmin></NeedLogin>; break;
     case "login": page = <Auth mode="login" />; break;
     case "register": page = <Auth mode="register" />; break;
+    case "about": page = <About />; break;
     default: page = <Browse />;
   }
 
@@ -74,7 +76,7 @@ export default function App() {
       <Header route={route} />
       <main>{page}</main>
       <footer>
-        <div className="wrap">Community Store. Buy and sell with students, staff and neighbours.</div>
+        <div className="wrap">Community Store. Buy and sell with students, staff and neighbours. <a href="#/about">How it works</a></div>
       </footer>
     </>
   );

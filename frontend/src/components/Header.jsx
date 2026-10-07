@@ -16,6 +16,7 @@ export default function Header({ route }) {
           {user && link("my-listings", "My listings", "my-listings")}
           {user && link("dashboard", "Dashboard", "dashboard")}
           {user?.role === "ADMIN" && link("admin", "Admin", "admin")}
+          {link("about", "How it works", "about")}
         </nav>
         {ready && (user
           ? <button className="ib" onClick={logout}>Log out</button>

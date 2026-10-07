@@ -17,3 +17,39 @@ nav { overflow-x: auto; white-space: nowrap; }
 .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
 a.btn { text-decoration: none; display: inline-block; }
 .pad { padding-bottom: 20px; }
+/* Category tile shown when a listing has no photo */
+.ph { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: var(--navy2); background: linear-gradient(135deg, var(--mist), #DCE6F8); font-size: 0.85rem; font-weight: 600; }
+.hero-img.ph { height: 300px; }
+.hero-img.ph svg { width: 72px; height: 72px; }
+
+/* Instant feedback: buttons react on hover and press, cards lift on hover */
+.btn, .chip, .ib, nav a { transition: background-color 0.12s, color 0.12s, transform 0.08s, box-shadow 0.12s; }
+.btn:active, .chip:active, .ib:active { transform: scale(0.97); }
+.chip:hover { background: var(--mist); }
+.chip.on:hover { background: var(--navy2); }
+.card { transition: transform 0.15s, box-shadow 0.15s; }
+.card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px rgba(10, 31, 68, 0.12); }
+
+/* While a save/delete/login request is running: block double clicks and show a wait cursor */
+body.busy .btn, body.busy .ib { pointer-events: none; opacity: 0.65; }
+body.busy { cursor: progress; }
+
+/* Thin progress bar at the top while waiting for the backend (hidden for the first 150 ms) */
+.loadbar { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 80; overflow: hidden; opacity: 0; animation: loadshow 0s 0.15s forwards; }
+.loadbar::before { content: ""; position: absolute; inset: 0; width: 40%; background: #7FB0FF; animation: loadslide 1s ease-in-out infinite; }
+@keyframes loadshow { to { opacity: 1; } }
+@keyframes loadslide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+@media (prefers-reduced-motion: reduce) { .card:hover, .btn:active, .chip:active, .ib:active { transform: none; } .loadbar::before { animation: none; width: 100%; } }
+
+/* Welcome banner for first-time visitors and the "How it works" page */
+.welcome { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; justify-content: space-between; background: var(--mist); border: 1px solid var(--line); border-left: 4px solid var(--navy); border-radius: 12px; padding: 14px 18px; margin-top: 22px; }
+.welcome p { margin: 2px 0 0; color: var(--muted); }
+.lead { color: var(--muted); max-width: 44em; font-size: 1.05rem; }
+.steps { list-style: none; padding: 0; margin: 24px 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.step { border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.step p { margin: 0; color: var(--muted); flex: 1; }
+.step h3 { font-size: 1.15rem; }
+.num { width: 34px; height: 34px; border-radius: 99px; background: var(--navy); color: var(--white); display: grid; place-items: center; font: 700 1rem "Bricolage Grotesque", sans-serif; }
+.panel h3 { margin-bottom: 6px; }
+.panel p { margin: 0; }
+footer a { color: var(--white); }

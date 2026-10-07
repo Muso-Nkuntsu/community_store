@@ -10,6 +10,27 @@ export class ApiError extends Error {
   }
 }
 
+// Counts requests in flight so the app can show a progress bar and block double clicks.
+let pending = 0;
+let mutating = 0;
+const listeners = new Set();
+function track(isMutation, delta) {
+  pending += delta;
+  if (isMutation) mutating += delta;
+  document.body.classList.toggle("busy", mutating > 0);
+  listeners.forEach((fn) => fn(pending));
+}
+
+// True while any request is waiting for the backend
+export function usePending() {
+  const [n, setN] = useState(pending);
+  useEffect(() => {
+    listeners.add(setN);
+    return () => listeners.delete(setN);
+  }, []);
+  return n > 0;
+}
+
 // Calls the backend. The session cookie (cs_session) is sent automatically; we never touch the token.
 export async function api(path, { method = "GET", body, form } = {}) {
   const opts = { method, headers: {} };
@@ -19,15 +40,21 @@ export async function api(path, { method = "GET", body, form } = {}) {
     opts.headers["Content-Type"] = "application/json";
     opts.body = JSON.stringify(body);
   }
-  let res;
+  const isMutation = method !== "GET";
+  track(isMutation, 1);
   try {
-    res = await fetch("/api" + path, opts);
-  } catch {
-    throw new ApiError(0, { error: { message: "Cannot reach the server. Check that the backend is running." } });
+    let res;
+    try {
+      res = await fetch("/api" + path, opts);
+    } catch {
+      throw new ApiError(0, { error: { message: "Cannot reach the server. Check that the backend is running." } });
+    }
+    const data = await res.json().catch(() => null);
+    if (!res.ok) throw new ApiError(res.status, data);
+    return data;
+  } finally {
+    track(isMutation, -1);
   }
-  const data = await res.json().catch(() => null);
-  if (!res.ok) throw new ApiError(res.status, data);
-  return data;
 }
 
 // Builds "?a=1&b=2" and skips empty values

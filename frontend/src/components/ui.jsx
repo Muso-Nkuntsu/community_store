@@ -1,4 +1,31 @@
 // Small shared pieces used by many pages
+import { useState } from "react";
+
+// Simple line icons shown when a listing has no photo, one per category
+const ICONS = {
+  TEXTBOOKS: "M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z M4 19a2 2 0 0 0 2 2h13",
+  ELECTRONICS: "M5 5h14v10H5z M2 19h20",
+  SERVICES: "M3 8h18v11H3z M9 8V5h6v3",
+  CLOTHING: "M8 3 3 6l2 4 2-1v11h10V9l2 1 2-4-5-3a4 4 0 0 1-8 0z",
+  FURNITURE: "M7 3v9h10V3 M5 12h14v4H5z M7 16v5 M17 16v5",
+  OTHER: "M3 8l9-5 9 5v8l-9 5-9-5z M3 8l9 5 9-5 M12 13v8",
+};
+
+// A listing's photo. Falls back to a category tile when there is no photo or it fails to load.
+export function ListingImage({ l, className = "thumb", alt = "" }) {
+  const [failed, setFailed] = useState(false);
+  if (l.imageUrl && !failed) {
+    return <img className={className} src={l.imageUrl} alt={alt} loading="lazy" onError={() => setFailed(true)} />;
+  }
+  return (
+    <div className={className + " ph"} role="img" aria-label={alt || "No photo"}>
+      <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d={ICONS[l.category] || ICONS.OTHER} />
+      </svg>
+      <span>{l.categoryLabel || "No photo"}</span>
+    </div>
+  );
+}
 
 export const Loading = () => <p className="empty">Loading...</p>;
 
@@ -41,7 +68,7 @@ export function Pagination({ page, totalPages, onPage }) {
 export function ListingCard({ l, children }) {
   return (
     <article className="card">
-      <a href={"#/listing/" + l.id}><img className="thumb" src={l.displayImageUrl} alt="" /></a>
+      <a href={"#/listing/" + l.id} tabIndex={-1} aria-hidden="true"><ListingImage l={l} /></a>
       <div className="cb">
         <div className="row">
           <span className="tag">{l.categoryLabel}</span>

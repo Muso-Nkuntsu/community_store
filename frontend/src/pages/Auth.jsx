@@ -23,7 +23,8 @@ export default function Auth({ mode }) {
         await login(f.email.trim(), f.password);
         notify("Signed in");
       }
-      window.location.hash = "#/";
+      // New accounts start on the "How it works" page; returning users go to the listings
+      window.location.hash = isRegister ? "#/about" : "#/";
     } catch (e2) {
       setErr(e2);
     }

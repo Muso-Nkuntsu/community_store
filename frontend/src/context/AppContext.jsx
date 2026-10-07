@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { api } from "../api";
+import { api, usePending } from "../api";
 
 const Ctx = createContext(null);
 export const useApp = () => useContext(Ctx);
@@ -8,6 +8,7 @@ export function AppProvider({ children }) {
   const [user, setUser] = useState(null); // { id, name, email, role } or null
   const [ready, setReady] = useState(false);
   const [toast, setToast] = useState("");
+  const pending = usePending();
 
   // Ask the server who is logged in (the cookie decides, never localStorage)
   useEffect(() => {
@@ -42,6 +43,7 @@ export function AppProvider({ children }) {
 
   return (
     <Ctx.Provider value={{ user, setUser, ready, login, register, logout, notify: setToast }}>
+      {pending && <div className="loadbar" aria-hidden="true" />}
       {children}
       {toast && <div className="toast" role="status">{toast}</div>}
     </Ctx.Provider>

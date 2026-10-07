@@ -1,60 +1,27 @@
-import { useEffect, useState } from "react";
+// Shared values that must match the backend's lib/constants.ts.
+// Each entry is [value sent to the API, label shown to the user].
 
-// Every backend error has the shape { error: { code, message, fields } }
-export class ApiError extends Error {
-  constructor(status, data) {
-    super(data?.error?.message || "Something went wrong. Please try again.");
-    this.status = status;
-    this.code = data?.error?.code;
-    this.fields = data?.error?.fields || {};
-  }
-}
+export const CATEGORIES = [
+  ["TEXTBOOKS", "Textbooks"],
+  ["ELECTRONICS", "Electronics"],
+  ["SERVICES", "Services"],
+  ["CLOTHING", "Clothing"],
+  ["FURNITURE", "Furniture"],
+  ["OTHER", "Other"],
+];
 
-// Calls the backend. The session cookie (cs_session) is sent automatically; we never touch the token.
-export async function api(path, { method = "GET", body, form } = {}) {
-  const opts = { method, headers: {} };
-  if (form) {
-    opts.body = form; // multipart upload, the browser sets the Content-Type
-  } else if (body !== undefined) {
-    opts.headers["Content-Type"] = "application/json";
-    opts.body = JSON.stringify(body);
-  }
-  let res;
-  try {
-    res = await fetch("/api" + path, opts);
-  } catch {
-    throw new ApiError(0, { error: { message: "Cannot reach the server. Check that the backend is running." } });
-  }
-  const data = await res.json().catch(() => null);
-  if (!res.ok) throw new ApiError(res.status, data);
-  return data;
-}
+export const REASONS = [
+  ["FRAUD", "Fraud / suspicious listing"],
+  ["INAPPROPRIATE", "Inappropriate content"],
+  ["INCORRECT_INFO", "Incorrect information"],
+  ["SPAM", "Spam"],
+  ["OTHER", "Other"],
+];
 
-// Builds "?a=1&b=2" and skips empty values
-export function qs(obj) {
-  const p = new URLSearchParams();
-  Object.entries(obj).forEach(([k, v]) => {
-    if (v !== "" && v !== null && v !== undefined) p.set(k, v);
-  });
-  const s = p.toString();
-  return s ? "?" + s : "";
-}
-
-// Loads a GET endpoint. Pass null to skip. reload() fetches again.
-export function useApi(path) {
-  const [state, setState] = useState({ loading: !!path, data: null, error: null });
-  const [tick, setTick] = useState(0);
-  useEffect(() => {
-    if (!path) {
-      setState({ loading: false, data: null, error: null });
-      return;
-    }
-    let live = true;
-    setState((s) => ({ ...s, loading: true, error: null }));
-    api(path)
-      .then((data) => live && setState({ loading: false, data, error: null }))
-      .catch((error) => live && setState({ loading: false, data: null, error }));
-    return () => { live = false; };
-  }, [path, tick]);
-  return { ...state, reload: () => setTick((t) => t + 1) };
+// "2026-10-07T11:30:00.000Z" -> "7 Oct 2026"
+export function fmtDate(value) {
+  if (!value) return "";
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toLocaleDateString("en-ZA", { day: "numeric", month: "short", year: "numeric" });
 }

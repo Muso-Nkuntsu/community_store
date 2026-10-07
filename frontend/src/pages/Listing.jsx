@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { api, useApi } from "../api";
 import { useApp } from "../context/AppContext.jsx";
-import { ErrorBox, FieldErr, FormErr, Loading } from "../components/ui.jsx";
+import { ErrorBox, FieldErr, FormErr, ListingImage, Loading } from "../components/ui.jsx";
 import { REASONS, fmtDate } from "../constants";
 
 export default function Listing({ id }) {
@@ -53,7 +53,7 @@ export default function Listing({ id }) {
   return (
     <div className="wrap sec">
       <div className="cols">
-        <img className="hero-img" src={l.displayImageUrl} alt={l.title} />
+        <ListingImage l={l} className="hero-img" alt={l.title} />
         <div>
           <div className="row" style={{ justifyContent: "flex-start" }}>
             <span className="tag">{l.categoryLabel}</span>

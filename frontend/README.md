@@ -17,32 +17,32 @@ To make a production build: `npm run build` (output goes to `dist/`).
 ## Project structure
 
     index.html                    page shell
+    vite.config.js                dev server + proxy to the backend
     src/main.jsx                  React entry point
-    src/App.jsx                   layout and page routing (#/, #/bulletin, #/dashboard)
-    src/styles.css                all styling (colours are at the top in :root)
-    src/utils.js                  price/date/star helpers
-    src/api.js                    backend connection point
-    src/context/StoreContext.jsx  all app state and actions (cart, auth, orders, posts, reviews)
-    src/data/products.js          product list, categories, pickup points
-    src/data/seed.js              starting bulletin posts and reviews
-    src/components/               Header, ProductCard, ProductModal, CartDrawer,
-                                  NotificationsPanel, AuthModal, Modal, Toast
-    src/pages/                    Shop, Bulletin, Dashboard
+    src/App.jsx                   layout and hash routing (#/, #/listing/<id>, #/sell, #/admin ...)
+    src/api.js                    backend connection: api(), useApi(), ApiError
+    src/constants.js              categories, report reasons, date helper (must match the backend)
+    src/context/AppContext.jsx    logged-in user, login/register/logout, toast
+    src/components/               Header and small shared pieces (ui.jsx)
+    src/pages/                    Browse, Listing, Sell, MyListings, Wishlist, Dashboard,
+                                  Seller, MyReports, Admin, Auth
 
-## Connecting the backend (for the backend team)
-1. Copy `.env.example` to `.env` and set `VITE_API_BASE`, for example `VITE_API_BASE=http://localhost:3000/api`
-2. While it is empty the app runs in the browser only and saves to localStorage (demo only, passwords stored in plain text).
-3. When it is set, these actions are also sent as JSON POST requests through `sync()` in `src/api.js`:
+## Connecting to the backend
 
-| Action   | Endpoint  | Body                                          |
-|----------|-----------|-----------------------------------------------|
-| Register | /register | { name, email, role }                         |
-| Login    | /login    | { email }                                     |
-| Checkout | /orders   | { id, items[], total, pickup, date, status }  |
-| Bulletin | /posts    | { id, title, cat, text, user, by, date }      |
-| Review   | /reviews  | { pid, user, rating, text, date }             |
+The frontend talks to the Next.js backend under `/api`. Nothing is stored in the browser:
+the backend sets an HttpOnly `cs_session` cookie on login and decides who is logged in.
 
-4. To finish the integration, edit `src/context/StoreContext.jsx`:
-   - load products, posts, reviews and orders from the API instead of `data/products.js`, `data/seed.js` and localStorage
-   - replace the local checks in `register` and `login` with the real responses (token or session)
-   - enable CORS on the server for the frontend origin
+1. Start the backend first (`npm run dev` in the backend folder). It must be on http://localhost:3000.
+   Check it at http://localhost:3000/api/health
+2. Start the frontend (`npm run dev` here) and open http://localhost:5173
+3. Vite forwards every `/api/...` request to the backend (see `vite.config.js`), so no CORS
+   setup is needed. If the backend runs somewhere else, start the frontend with
+   `BACKEND_URL=http://host:port npm run dev`.
+
+Always open the app on port 5173 during development, not 3000 (3000 shows the backend placeholder page).
+
+For production, serve the built `dist/` folder from the same origin as the backend
+(or put both behind one reverse proxy) so `/api` and the cookie keep working.
+
+Errors from the backend arrive as `{ error: { code, message, fields } }` and are turned into
+`ApiError` in `src/api.js`; `fields` drives the per-field messages on forms.

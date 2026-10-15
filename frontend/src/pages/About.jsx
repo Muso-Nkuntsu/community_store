@@ -1,9 +1,11 @@
 import { useApp } from "../context/AppContext.jsx";
+import { useTitle } from "../components/ui.jsx";
 
 // "How it works" page (#/about). New visitors are pointed here from the welcome banner,
 // and new accounts land here straight after registering.
 export default function About() {
   const { user } = useApp();
+  useTitle("How it works");
 
   // Each step sends the person to the right place. Pages that need an account go to register first.
   const steps = [
@@ -70,7 +72,7 @@ export default function About() {
         <div className="panel">
           <h3>Selling</h3>
           <p>
-            Your listings are under My listings, where you can edit or delete them. When an item
+            Your listings are under My listings. Open one to edit or delete it. When an item
             is gone, mark it as sold. It stays in your history but buyers can no longer contact you about it.
           </p>
         </div>

@@ -6,7 +6,7 @@ const BACKEND = process.env.BACKEND_URL || "http://localhost:3000";
 
 // The frontend calls same-origin URLs (fetch("/api/...")) so the cs_session cookie works.
 // In development this proxy forwards those requests to the backend.
-//
+
 // The backend blocks POST/PATCH/DELETE requests whose Origin header does not match its own
 // host (assertSameOrigin in lib/api.ts). The browser sends Origin: http://localhost:5173,
 // so the proxy rewrites Host and Origin to the backend's address. Without this, login,

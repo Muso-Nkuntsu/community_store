@@ -1,0 +1,843 @@
+{
+	"id": "87feddd8-56e5-4b57-a14d-5395b5420bc6",
+	"name": "Community Store API",
+	"timestamp": "2026-10-08T10:17:17.245Z",
+	"collection_id": "58491434-63fddd7a-f5c4-4665-8b68-4d5b1849bdd7",
+	"folder_id": 0,
+	"environment_id": "58491434-e3819a92-76dd-4da6-9954-2f498cbce7d3",
+	"totalPass": 29,
+	"delay": 0,
+	"persist": true,
+	"status": "finished",
+	"startedAt": "2026-10-08T10:16:57.490Z",
+	"totalFail": 0,
+	"results": [
+		{
+			"id": "fa4c978f-2465-4998-a7af-57ec151ae5e0",
+			"name": "1. Register (new user)",
+			"url": "http://localhost:3000/api/auth/register",
+			"time": 2473,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status 201": true
+			},
+			"testPassFailCounts": {
+				"Status 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				2473
+			],
+			"allTests": [
+				{
+					"Status 201": true
+				}
+			]
+		},
+		{
+			"id": "a5c49dbc-c968-4ef7-af63-527d7ef67e53",
+			"name": "2. Login (seeded user Thandi)",
+			"url": "http://localhost:3000/api/auth/login",
+			"time": 842,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				842
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "559a24c0-e873-440d-b0d6-13d77cc231ac",
+			"name": "3. Get session",
+			"url": "http://localhost:3000/api/auth/session",
+			"time": 589,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true,
+				"Authenticated": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Authenticated": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				589
+			],
+			"allTests": [
+				{
+					"Status 200": true,
+					"Authenticated": true
+				}
+			]
+		},
+		{
+			"id": "2ab4d6f8-7759-4776-9972-d1adf4c01c90",
+			"name": "4. Create listing",
+			"url": "http://localhost:3000/api/listings",
+			"time": 929,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"Status 201": true
+			},
+			"testPassFailCounts": {
+				"Status 201": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				929
+			],
+			"allTests": [
+				{
+					"Status 201": true
+				}
+			]
+		},
+		{
+			"id": "ceedcaa3-770a-46bf-ae53-b86ddf21bf2e",
+			"name": "5. Get listings (page 1)",
+			"url": "http://localhost:3000/api/listings?page=1&limit=12",
+			"time": 101,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true,
+				"Has pagination metadata": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Has pagination metadata": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				101
+			],
+			"allTests": [
+				{
+					"Status 200": true,
+					"Has pagination metadata": true
+				}
+			]
+		},
+		{
+			"id": "39104170-ee7e-4baf-8792-e5fc422b1bd4",
+			"name": "6. Search",
+			"url": "http://localhost:3000/api/listings?q=java",
+			"time": 82,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				82
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "10a54b51-86a0-4530-878e-17d5ba0f6202",
+			"name": "7. Filter by categories + search",
+			"url": "http://localhost:3000/api/listings?q=book&categories=TEXTBOOKS,ELECTRONICS",
+			"time": 78,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				78
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "6dc8db2d-b256-414d-aa19-e05ec8402ce0",
+			"name": "8. Get listing",
+			"url": "http://localhost:3000/api/listings/cmuzdtuo8000g8qs8akw8igy5",
+			"time": 890,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true,
+				"Owner sees edit rights": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Owner sees edit rights": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				890
+			],
+			"allTests": [
+				{
+					"Status 200": true,
+					"Owner sees edit rights": true
+				}
+			]
+		},
+		{
+			"id": "33172d15-87e3-4e6f-95f2-415cbb5d5ba5",
+			"name": "9. Update listing",
+			"url": "http://localhost:3000/api/listings/cmuzdtuo8000g8qs8akw8igy5",
+			"time": 97,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				97
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "1aa423dd-e5ae-46ea-a8b6-23f96c75cc69",
+			"name": "10. Mark sold",
+			"url": "http://localhost:3000/api/listings/cmuzdtuo8000g8qs8akw8igy5/sold",
+			"time": 685,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true,
+				"Contact hidden when sold": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Contact hidden when sold": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				685
+			],
+			"allTests": [
+				{
+					"Status 200": true,
+					"Contact hidden when sold": true
+				}
+			]
+		},
+		{
+			"id": "ce5180f4-dd7c-44d1-bb2c-ae6a2366eabf",
+			"name": "11. Delete listing",
+			"url": "http://localhost:3000/api/listings/cmuzdtuo8000g8qs8akw8igy5",
+			"time": 110,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				110
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "fe37d51a-2e15-46b9-b9bf-988d4afa2bd0",
+			"name": "12. Add to wishlist",
+			"url": "http://localhost:3000/api/wishlist",
+			"time": 622,
+			"responseCode": {
+				"code": 201,
+				"name": "Created"
+			},
+			"tests": {
+				"201 or 409 (already saved)": true
+			},
+			"testPassFailCounts": {
+				"201 or 409 (already saved)": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				622
+			],
+			"allTests": [
+				{
+					"201 or 409 (already saved)": true
+				}
+			]
+		},
+		{
+			"id": "bf63d5f8-e693-42af-9369-1e1bcf6b0513",
+			"name": "12b. Get wishlist",
+			"url": "http://localhost:3000/api/wishlist",
+			"time": 97,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				97
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "d4cb8574-7036-4e46-8082-ea6358941dda",
+			"name": "13. Remove from wishlist",
+			"url": "http://localhost:3000/api/wishlist/cmunhvoji000e8qlskgdzlt70",
+			"time": 837,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				837
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "da49a040-3597-45c3-ad40-ca0d73e01d27",
+			"name": "14. Report listing",
+			"url": "http://localhost:3000/api/listings/cmunhvoji000e8qlskgdzlt70/reports",
+			"time": 695,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {
+				"201 or 409 (already reported)": true
+			},
+			"testPassFailCounts": {
+				"201 or 409 (already reported)": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				695
+			],
+			"allTests": [
+				{
+					"201 or 409 (already reported)": true
+				}
+			]
+		},
+		{
+			"id": "326480f9-0aa9-4e5a-9f1d-e77c00e6a0b0",
+			"name": "14b. Normal user blocked from admin",
+			"url": "http://localhost:3000/api/admin/stats",
+			"time": 649,
+			"responseCode": {
+				"code": 403,
+				"name": "Forbidden"
+			},
+			"tests": {
+				"Status 403": true
+			},
+			"testPassFailCounts": {
+				"Status 403": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				649
+			],
+			"allTests": [
+				{
+					"Status 403": true
+				}
+			]
+		},
+		{
+			"id": "77841b1f-7fac-45bd-bbe3-d9b3983e9d3d",
+			"name": "14c. Logout",
+			"url": "http://localhost:3000/api/auth/logout",
+			"time": 573,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				573
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "db793a18-4446-4d74-8092-6f701b5b4d1f",
+			"name": "15. Admin login",
+			"url": "http://localhost:3000/api/auth/login",
+			"time": 294,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				294
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "584a0dd7-3828-4266-83de-0803b20beb0b",
+			"name": "15b. Admin stats",
+			"url": "http://localhost:3000/api/admin/stats",
+			"time": 134,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				134
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "4022e04e-f329-497e-9b03-69839b1d2979",
+			"name": "16. Admin listings",
+			"url": "http://localhost:3000/api/admin/listings?page=1&limit=20",
+			"time": 829,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				829
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "4c9c190c-d8cf-4cfa-a2a6-3cf941e75863",
+			"name": "17. Admin users",
+			"url": "http://localhost:3000/api/admin/users?page=1&limit=20",
+			"time": 1103,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				1103
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "068c31fc-ad64-4073-88dd-a3cf3648737f",
+			"name": "18. Admin reports (open queue)",
+			"url": "http://localhost:3000/api/admin/reports?status=OPEN",
+			"time": 652,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				652
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "9fd30a91-4cac-4448-99e8-74ff6b5f58fe",
+			"name": "19. Resolve report (dismiss)",
+			"url": "http://localhost:3000/api/admin/reports/cmunhvoln00148qlspjk0s6jj",
+			"time": 937,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				937
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		},
+		{
+			"id": "2209eb3c-5cca-4a2e-a1d4-ebeb78933b21",
+			"name": "19b. Resolve report and remove listing (alternative)",
+			"url": "http://localhost:3000/api/admin/reports/cmunhvoln00148qlspjk0s6jj",
+			"time": 68,
+			"responseCode": {
+				"code": 409,
+				"name": "Conflict"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				68
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "4b7153fe-0628-4c03-9d2a-d514eb4cba14",
+			"name": "20. Admin remove listing (reason required)",
+			"url": "http://localhost:3000/api/admin/listings/cmunhvojp000g8qlskh7qy52b",
+			"time": 937,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"200 or 409 (already removed)": true
+			},
+			"testPassFailCounts": {
+				"200 or 409 (already removed)": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				937
+			],
+			"allTests": [
+				{
+					"200 or 409 (already removed)": true
+				}
+			]
+		},
+		{
+			"id": "0faff3d4-d12d-4e9b-bfb8-8fbb4fefe53b",
+			"name": "21. Health check",
+			"url": "http://localhost:3000/api/health",
+			"time": 1027,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Status 200": true
+			},
+			"testPassFailCounts": {
+				"Status 200": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				1027
+			],
+			"allTests": [
+				{
+					"Status 200": true
+				}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 16330,
+	"collection": {
+		"requests": [
+			{
+				"id": "fa4c978f-2465-4998-a7af-57ec151ae5e0",
+				"method": "POST"
+			},
+			{
+				"id": "a5c49dbc-c968-4ef7-af63-527d7ef67e53",
+				"method": "POST"
+			},
+			{
+				"id": "559a24c0-e873-440d-b0d6-13d77cc231ac",
+				"method": "GET"
+			},
+			{
+				"id": "2ab4d6f8-7759-4776-9972-d1adf4c01c90",
+				"method": "POST"
+			},
+			{
+				"id": "ceedcaa3-770a-46bf-ae53-b86ddf21bf2e",
+				"method": "GET"
+			},
+			{
+				"id": "39104170-ee7e-4baf-8792-e5fc422b1bd4",
+				"method": "GET"
+			},
+			{
+				"id": "10a54b51-86a0-4530-878e-17d5ba0f6202",
+				"method": "GET"
+			},
+			{
+				"id": "6dc8db2d-b256-414d-aa19-e05ec8402ce0",
+				"method": "GET"
+			},
+			{
+				"id": "33172d15-87e3-4e6f-95f2-415cbb5d5ba5",
+				"method": "PATCH"
+			},
+			{
+				"id": "1aa423dd-e5ae-46ea-a8b6-23f96c75cc69",
+				"method": "POST"
+			},
+			{
+				"id": "ce5180f4-dd7c-44d1-bb2c-ae6a2366eabf",
+				"method": "DELETE"
+			},
+			{
+				"id": "fe37d51a-2e15-46b9-b9bf-988d4afa2bd0",
+				"method": "POST"
+			},
+			{
+				"id": "bf63d5f8-e693-42af-9369-1e1bcf6b0513",
+				"method": "GET"
+			},
+			{
+				"id": "d4cb8574-7036-4e46-8082-ea6358941dda",
+				"method": "DELETE"
+			},
+			{
+				"id": "da49a040-3597-45c3-ad40-ca0d73e01d27",
+				"method": "POST"
+			},
+			{
+				"id": "326480f9-0aa9-4e5a-9f1d-e77c00e6a0b0",
+				"method": "GET"
+			},
+			{
+				"id": "77841b1f-7fac-45bd-bbe3-d9b3983e9d3d",
+				"method": "POST"
+			},
+			{
+				"id": "db793a18-4446-4d74-8092-6f701b5b4d1f",
+				"method": "POST"
+			},
+			{
+				"id": "584a0dd7-3828-4266-83de-0803b20beb0b",
+				"method": "GET"
+			},
+			{
+				"id": "4022e04e-f329-497e-9b03-69839b1d2979",
+				"method": "GET"
+			},
+			{
+				"id": "4c9c190c-d8cf-4cfa-a2a6-3cf941e75863",
+				"method": "GET"
+			},
+			{
+				"id": "068c31fc-ad64-4073-88dd-a3cf3648737f",
+				"method": "GET"
+			},
+			{
+				"id": "9fd30a91-4cac-4448-99e8-74ff6b5f58fe",
+				"method": "PATCH"
+			},
+			{
+				"id": "2209eb3c-5cca-4a2e-a1d4-ebeb78933b21",
+				"method": "PATCH"
+			},
+			{
+				"id": "4b7153fe-0628-4c03-9d2a-d514eb4cba14",
+				"method": "DELETE"
+			},
+			{
+				"id": "0faff3d4-d12d-4e9b-bfb8-8fbb4fefe53b",
+				"method": "GET"
+			}
+		]
+	}
+}

@@ -1,5 +1,5 @@
 import { json, readJson, route } from "@/lib/api";
-import { createSession, requestMeta, setSessionCookie } from "@/lib/session";
+import { createSession, destroySessionByToken, getSessionTokenFromRequest, requestMeta, setSessionCookie } from "@/lib/session";
 import { registerSchema } from "@/lib/validations";
 import { registerUser } from "@/lib/services/user-service";
 
@@ -12,6 +12,8 @@ export const POST = route(async (req) => {
   const input = registerSchema.parse(await readJson(req));
   const user = await registerUser(input);
 
+  // Same as login: replace any session this browser already had (prevents session fixation).
+  await destroySessionByToken(getSessionTokenFromRequest(req));
   const { token } = await createSession(user.id, requestMeta(req));
   const res = json({ user, message: "Account created." }, 201);
   setSessionCookie(res, token);

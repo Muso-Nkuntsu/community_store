@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
-import { qs, useApi } from "../api";
+import { useEffect, useRef, useState } from "react";
+import { qs, useApi, useDebounced } from "../api";
 import { CATEGORIES } from "../constants";
-import { ErrorBox, ListingCard, Loading, Pagination } from "../components/ui.jsx";
+import { ErrorBox, ListingCard, Loading, Pagination, useTitle } from "../components/ui.jsx";
 import { useApp } from "../context/AppContext.jsx";
 
 // Remembers (in this browser only) that the visitor has seen the welcome banner.
@@ -10,28 +10,35 @@ const SEEN_KEY = "cs_welcome_seen";
 const hasSeenWelcome = () => { try { return localStorage.getItem(SEEN_KEY) === "1"; } catch { return false; } };
 const markWelcomeSeen = () => { try { localStorage.setItem(SEEN_KEY, "1"); } catch { /* ignore */ } };
 
+// Search and filters survive opening a listing and coming back (kept in memory for this tab)
+const last = { q: "", cats: [], page: 1 };
+
 export default function Browse() {
-  const [q, setQ] = useState("");
-  const [dq, setDq] = useState(""); // debounced search text
-  const [cats, setCats] = useState([]);
-  const [page, setPage] = useState(1);
+  const [q, setQ] = useState(last.q);
+  const [cats, setCats] = useState(last.cats);
+  const [page, setPage] = useState(last.page);
+  const dq = useDebounced(q.trim(), 300); // wait until typing pauses before calling the API
   const { user, ready } = useApp();
   const [welcome, setWelcome] = useState(() => !hasSeenWelcome());
   const closeWelcome = () => { markWelcomeSeen(); setWelcome(false); };
+  useTitle(null);
 
-  // Wait about 300 ms after typing before calling the API
+  // A new search starts again from page 1
+  const prevDq = useRef(dq);
   useEffect(() => {
-    const t = setTimeout(() => { setDq(q); setPage(1); }, 300);
-    return () => clearTimeout(t);
-  }, [q]);
+    if (prevDq.current !== dq) { prevDq.current = dq; setPage(1); }
+  }, [dq]);
 
-  const { loading, data, error } = useApi("/listings" + qs({ q: dq, categories: cats.join(","), page, limit: 12 }));
+  useEffect(() => { Object.assign(last, { q, cats, page }); }, [q, cats, page]);
+
+  const { loading, data, error, reload } = useApi("/listings" + qs({ q: dq, categories: cats.join(","), page, limit: 12 }));
 
   const toggle = (v) => {
     setCats((c) => (c.includes(v) ? c.filter((x) => x !== v) : [...c, v]));
     setPage(1);
   };
-  const clear = () => { setQ(""); setDq(""); setCats([]); setPage(1); };
+  const clear = () => { setQ(""); setCats([]); setPage(1); };
+  const filtered = Boolean(q.trim() || cats.length);
 
   return (
     <>
@@ -39,9 +46,9 @@ export default function Browse() {
         <div className="wrap">
           <h1>Buy and sell within your community</h1>
           <p>Textbooks, electronics, furniture and services from students and neighbours.</p>
-          <div className="search">
+          <form className="search" role="search" onSubmit={(e) => e.preventDefault()}>
             <input type="search" placeholder="Search listings" aria-label="Search listings" value={q} onChange={(e) => setQ(e.target.value)} />
-          </div>
+          </form>
         </div>
       </section>
       <div className="wrap">
@@ -58,21 +65,28 @@ export default function Browse() {
             </div>
           </div>
         )}
-        <div className="bar">
+        <div className="bar" role="group" aria-label="Filter by category">
           {CATEGORIES.map(([v, label]) => (
-            <button key={v} className={"chip" + (cats.includes(v) ? " on" : "")} onClick={() => toggle(v)}>{label}</button>
+            <button key={v} className={"chip" + (cats.includes(v) ? " on" : "")} aria-pressed={cats.includes(v)} onClick={() => toggle(v)}>{label}</button>
           ))}
-          {(q || cats.length > 0) && <button className="btn alt sm" onClick={clear}>Clear filters</button>}
+          {filtered && <button className="btn alt sm" onClick={clear}>Clear filters</button>}
         </div>
-        <ErrorBox error={error} />
+        <ErrorBox error={error} onRetry={reload} />
         {loading && !data ? <Loading /> : data && (
           <>
-            <p className="meta">{data.total} listing{data.total === 1 ? "" : "s"}</p>
-            <div className="grid">
-              {data.items.length
-                ? data.items.map((l) => <ListingCard key={l.id} l={l} />)
-                : <p className="empty">No listings found.</p>}
-            </div>
+            <p className="meta" aria-live="polite">{data.total} listing{data.total === 1 ? "" : "s"}{dq ? ` for "${dq}"` : ""}</p>
+            {data.items.length ? (
+              <div className="grid">
+                {data.items.map((l) => <ListingCard key={l.id} l={l} />)}
+              </div>
+            ) : (
+              <div className="empty-box">
+                <p>{filtered ? "No listings match your search." : "No listings yet."}</p>
+                {filtered
+                  ? <button className="btn alt sm" onClick={clear}>Clear filters</button>
+                  : <a className="btn sm" href="#/sell">Be the first to sell something</a>}
+              </div>
+            )}
             <Pagination page={data.page} totalPages={data.totalPages} onPage={setPage} />
           </>
         )}

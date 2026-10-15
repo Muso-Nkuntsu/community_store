@@ -1,26 +1,33 @@
 import { useApp } from "../context/AppContext.jsx";
+import { LoginLink } from "./ui.jsx";
+
+// Which nav item to highlight for each route (e.g. the seller and listing pages belong to Browse)
+const SECTION = { "": "", listing: "", seller: "", reports: "dashboard" };
 
 export default function Header({ route }) {
   const { user, ready, logout } = useApp();
-  const link = (path, label, key) => (
-    <a href={"#/" + path} className={route === key ? "on" : ""}>{label}</a>
+  const current = route in SECTION ? SECTION[route] : route;
+  const link = (path, label) => (
+    <a href={"#/" + path} className={current === path ? "on" : ""} aria-current={current === path ? "page" : undefined}>
+      {label}
+    </a>
   );
   return (
     <header>
       <div className="wrap">
         <a className="brand" href="#/">Community Store</a>
         <nav aria-label="Main">
-          {link("", "Browse", "")}
-          {link("sell", "Sell", "sell")}
-          {user && link("wishlist", "Wishlist", "wishlist")}
-          {user && link("my-listings", "My listings", "my-listings")}
-          {user && link("dashboard", "Dashboard", "dashboard")}
-          {user?.role === "ADMIN" && link("admin", "Admin", "admin")}
-          {link("about", "How it works", "about")}
+          {link("", "Browse")}
+          {link("sell", "Sell")}
+          {user && link("wishlist", "Wishlist")}
+          {user && link("my-listings", "My listings")}
+          {user && link("dashboard", "Dashboard")}
+          {user?.role === "ADMIN" && link("admin", "Admin")}
+          {link("about", "How it works")}
         </nav>
         {ready && (user
           ? <button className="ib" onClick={logout}>Log out</button>
-          : <a className="ib" href="#/login" style={{ textDecoration: "none" }}>Log in</a>)}
+          : <LoginLink className="ib" />)}
       </div>
     </header>
   );

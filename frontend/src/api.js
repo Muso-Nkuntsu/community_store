@@ -31,9 +31,14 @@ export function usePending() {
   return n > 0;
 }
 
+// Called when the server says the session is gone (expired, logged out elsewhere, account deactivated).
+// /auth/* calls are excluded: a 401 from /auth/login just means a wrong password.
+let onUnauthorized = null;
+export const setUnauthorizedHandler = (fn) => { onUnauthorized = fn; };
+
 // Calls the backend. The session cookie (cs_session) is sent automatically; we never touch the token.
 export async function api(path, { method = "GET", body, form } = {}) {
-  const opts = { method, headers: {} };
+  const opts = { method, headers: { Accept: "application/json" }, credentials: "same-origin" };
   if (form) {
     opts.body = form; // multipart upload, the browser sets the Content-Type
   } else if (body !== undefined) {
@@ -47,10 +52,13 @@ export async function api(path, { method = "GET", body, form } = {}) {
     try {
       res = await fetch("/api" + path, opts);
     } catch {
-      throw new ApiError(0, { error: { message: "Cannot reach the server. Check that the backend is running." } });
+      throw new ApiError(0, { error: { message: "Cannot reach the server. Check your connection and try again." } });
     }
     const data = await res.json().catch(() => null);
-    if (!res.ok) throw new ApiError(res.status, data);
+    if (!res.ok) {
+      if (res.status === 401 && !path.startsWith("/auth/")) onUnauthorized?.();
+      throw new ApiError(res.status, data);
+    }
     return data;
   } finally {
     track(isMutation, -1);
@@ -65,6 +73,16 @@ export function qs(obj) {
   });
   const s = p.toString();
   return s ? "?" + s : "";
+}
+
+// Returns `value` once it has stopped changing for `ms` milliseconds (for search boxes)
+export function useDebounced(value, ms = 300) {
+  const [v, setV] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setV(value), ms);
+    return () => clearTimeout(t);
+  }, [value, ms]);
+  return v;
 }
 
 // Loads a GET endpoint. Pass null to skip. reload() fetches again.
